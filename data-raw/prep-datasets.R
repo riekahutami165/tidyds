@@ -100,7 +100,6 @@ sherlock <- sherlock_raw %>%
     story = if_else(str_detect(text, "ADVENTURE"),
                     text,
                     NA_character_),
-    story = str_remove_all(story, "^ADVENTURE "),
     text = na_if(text, "")
   ) %>%
   fill(story) %>%
