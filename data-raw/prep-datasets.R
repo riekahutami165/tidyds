@@ -56,12 +56,14 @@ udara_bandung_raw %>%
   mutate(station = coalesce(stasiun, statsiun)) %>%
   rename(day = waktu) %>%
   select(-stasiun, -statsiun) %>%
+  write_csv("data-raw/udara_bandung.csv")
+
+udara_bandung_raw %>%
+  mutate(station = coalesce(stasiun, statsiun)) %>%
+  rename(day = waktu) %>%
+  select(-stasiun, -statsiun) %>%
   group_by(station) %>%
   group_walk(~write_csv(.x, paste0(here("data-raw"), "/", .y$station, ".csv")))
-
-vroom::vroom(fs::dir_ls(path = "data-raw", regexp = "*.csv")[1:4], id = "station") %>%
-  dplyr::mutate(station = gsub(pattern = "\\.csv$", "", basename(station))) %>%
-  readr::write_csv("data-raw/udara_bandung.csv")
 
 # Dirty excel file (from janitor) -----------------------------------------
 
@@ -98,7 +100,6 @@ sherlock <- sherlock_raw %>%
     story = if_else(str_detect(text, "ADVENTURE"),
                     text,
                     NA_character_),
-    story = str_remove_all(story, "^ADVENTURE "),
     text = na_if(text, "")
   ) %>%
   fill(story) %>%
@@ -107,57 +108,3 @@ sherlock <- sherlock_raw %>%
 
 sherlock %>%
   write_csv(here("data-raw", "sherlock.csv"))
-
-
-tidy_sherlock <- sherlock %>%
-  group_by(story) %>%
-  unnest_tokens(word, text) %>%
-  ungroup() %>%
-  anti_join(stop_words) %>%
-  count(story, word, sort = TRUE)
-
-sherlock_dtm <- tidy_sherlock %>%
-  cast_dtm(story, word, n)
-
-sherlock_dtm
-
-sherlock_lda <- LDA(sherlock_dtm, k = 6)
-
-sherlock_lda %>%
-  tidy() %>%
-  group_by(topic) %>%
-  top_n(10, beta) %>%
-  ungroup() %>%
-  mutate(topic = paste0("Topic ", topic),
-         term = reorder_within(term, beta, topic)) %>%
-  ggplot(aes(term, beta, fill = as.factor(topic))) +
-  geom_col(alpha = 0.8, show.legend = FALSE) +
-  facet_wrap(~ topic, scales = "free_y") +
-  coord_flip() +
-  scale_x_reordered() +
-  labs(x = NULL, y = expression(beta),
-       title = "Highest word probabilities for each topic",
-       subtitle = "Different words are associated with different topics")
-
-sherlock_lda %>%
-  tidy(matrix = "gamma") %>%
-  group_by(document) %>%
-  top_n(1, gamma)
-
-sherlock_lda %>%
-  tidy(matrix = "gamma") %>%
-  count(story = document, topic, sort = TRUE)
-
-sherlock_lda %>%
-  tidy(matrix = "gamma") %>%
-  ggplot(aes(x = gamma, fill = factor(topic))) +
-  geom_histogram() +
-  facet_wrap(~document)
-
-sherlock_lda %>%
-  augment(data = sherlock_dtm) %>%
-  count(story = document, .topic, sort = TRUE) %>%
-  arrange(.topic)
-
-sherlock_lda %>%
-  tidy()
