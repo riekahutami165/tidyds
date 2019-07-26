@@ -30,6 +30,7 @@ Seperti disebutkan sebelumnya bahwa Anda juga dapat menuliskan kode pemrograman 
 tulis kode pemrograman
 pada bagian ini
 ```
+
 Selanjutnya untuk menegaskan bahasa pemrograman apa yang digunakan dan akan dieksekusidalam suatu *chunk*, Anda dapat menambahkan penanda "{bahasa_pemrograman}" tepat setelah penanda *backtics* di awal *chunk*. R Markdown mendukung dan dapat mengeksekusi beberapa jenis bahasa pemrograman selain R, misalnya Python, Julia, C, Fortran, SQL, dan Shell script. Dalam contoh berikut menunjukan penggunaan bahasa pemrograman R di dalam suatu *chunk*:
 
 ```{r}
@@ -62,6 +63,7 @@ Jalankanlah kode dalam *chunk* berikut:
 Saat Anda menjalankan *chunk* di atas, R akan mengevaluasi dan melakukan eksekusi pada baris kode yang dituliskan. Dalam contoh di atas, keluaran dari eksekusi baris kode adalah kalimat "Halo, nama saya adalah (nama Anda)" yang tercetak di dokumen R Markdown atau konsol RStudio. Mengapa kalimat "# isi dengan nama Anda" tidak ikut tercetak?
 
 Sekarang jalankanlah baris kode berikut:
+
 ```{r}
 123
 ```
@@ -142,6 +144,7 @@ Fungsi memiliki tugas utama untuk mengolah suatu *input* menjadi *output*. Anda 
 
 ```{r}
 iris # mencetak data pada layar
+?head
 ?iris # membaca dokumentasi data iris
 dim(iris) # memberikan dimensi dari data. Angka pertama merupakan jumlah baris dan angka kedua adalah jumlah kolom
 str(iris) # mencetak struktur dari data (jumlah baris, jumlah kolom, nama kolom, jenis data pada kolom)
