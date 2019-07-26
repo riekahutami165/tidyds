@@ -79,11 +79,7 @@ berikut:
     #> │   └── un_smp.csv
     #> ├── DESCRIPTION
     #> ├── inst
-    #> │   ├── aq
-    #> │   │   ├── global.R
-    #> │   │   ├── server.R
-    #> │   │   └── ui.R
-    #> │   └── ipa
+    #> │   └── aq
     #> │       ├── global.R
     #> │       ├── server.R
     #> │       └── ui.R
@@ -97,27 +93,18 @@ berikut:
     #> ├── NAMESPACE
     #> ├── R
     #> │   ├── check-deps.R
-    #> │   ├── run-aq.R
-    #> │   └── run-ipa.R
+    #> │   └── run-aq.R
     #> ├── README.md
     #> ├── README.Rmd
     #> ├── tidyds.Rproj
     #> └── vignettes
-    #>     ├── m1_essentials-ans.Rmd
     #>     ├── m1_essentials.Rmd
-    #>     ├── m2_data-import-ans.Rmd
     #>     ├── m2_data-import.Rmd
-    #>     ├── m3_tidy-data-carpentry-ans.Rmd
     #>     ├── m3_tidy-data-carpentry.Rmd
-    #>     ├── m4_data-visualisation-ans.Rmd
     #>     ├── m4_data-visualisation.Rmd
-    #>     ├── m5_modeling-1-ans.Rmd
     #>     ├── m5_modeling-1.Rmd
-    #>     ├── m6_modeling-2-ans.Rmd
     #>     ├── m6_modeling-2.Rmd
-    #>     ├── m7_shiny-1-ans.Rmd
     #>     ├── m7_shiny-1.Rmd
-    #>     ├── m8_shiny-2-ans.Rmd
     #>     └── m8_shiny-2.Rmd
     #> 
-    #> 9 directories, 55 files
+    #> 8 directories, 43 files
