@@ -15,7 +15,7 @@ knitr::opts_chunk$set(
 ```
 <!-- Baris kode di atas merupakan pengaturan untuk dokumen R Markdown dan tidak akan tercetak pada berkas dokumen akhir -->
 
-> Dalam modul ini Anda akan belajar bagaimana cara membuat aplikasi web sederhana dengan menggunakan shiny.
+> Dalam modul ini Anda akan belajar bagaimana cara membuat aplikasi web sederhana untuk visualisasi data.
 
 Modul ini sedikit berbeda dengan modul-modul sebelumnya yang telah Anda kerjakan. Kali ini kita akan menggunakan dokumen R Markdown sebagai *sandbox* untuk mengembangkan aplikasi web sederhana. Apakah Anda tertarik?
 

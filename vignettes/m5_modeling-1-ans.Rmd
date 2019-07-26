@@ -82,7 +82,7 @@ un_smp %>%
 Sekarang kita akan melakukan tahap pertama dari pembelajaran mesin, yaitu membagi data yang kita miliki ke dalam dua kelompok. Kelompok pertama disebut `training` yang akan digunakan untuk membuat pemodelan. Sedangkan kelompok kedua disebut `testing` yang akan digunakan untuk menguji performa model yang kita buat. Fungsi `initial_split()` dari paket `rsample` akan digunakan untuk melakukan hal tersebut. Berapakah komposisi `training` terhadap `testing` bawaan pada fungsi tersebut? (Petunjuk: `?initial_split`)
 
 ```{r}
-set.seed(260719)
+set.seed(270719)
 un_smp_split <- initial_split(un_smp)
 un_smp_split
 ```
