@@ -19,26 +19,26 @@ Anda mungkin sudah terbiasa membaca narasi teks, seperti artikel, cerita pendek,
 Dalam studi kasus ini kita akan melakukan pemodelan topic (*topic modeling*) untuk mengkategorikan topik dari buku cerita. Kita akan menggunakan beberapa paket untuk melakukan hal tersebut, diantaranya adalah `tidytext` dan `topicmodels`. Selain kedua paket tersebut aktifkanlah juga paket `vroom`, `here`, `dplyr`, dan `ggplot2`!
 
 ```{r}
-___
-___
-___
-___
-___
-___
+library(topicmodels)
+library(tidytext)
+library(vroom)
+library(here)
+library(dplyr)
+library(ggplot2)
 ```
 
 Pada subdirektori "data-raw" terdapat berkas bernama "sherlock.csv". Imporlah berkas tersebut menjadi obyek R bernama `sherlock`. Ya! Kita akan melakukan pengkategorian topik buku "The Adventures of Sherlock Holmes" karya Arthur Conan Doyle. Apakah Anda tertarik? Jangan lupa untuk melakukan inspeksi terhadap data `sherlock` tersebut.
 
 ```{r}
-sherlock <- vroom(here("data-raw", "___"))
-___
+sherlock <- vroom(here("data-raw", "sherlock.csv"))
+str(sherlock)
 ```
 
 Data `sherlock` tersebut berisi kolom "story" yang merupakan subcerita dari cerita keseluruhan dan kolom "text" yang merupakan naskah cerita pada setiap baris.
 Sekarang kita akan melakukan transformasi data untuk mencatat kata apa saja yang muncul untuk setiap subcerita. Jalankan *chunk* berikut dan simpanlah hasilnya sebagai obyek R bernama `sherlock_tidy`! 
 
 ```{r}
-___ <- sherlock %>% 
+sherlock_tidy <- sherlock %>% 
   filter(!is.na(text)) %>% 
   group_by(story) %>%
   unnest_tokens(word, text) %>%
@@ -54,13 +54,13 @@ Anda dapat menghitung frekuensi penggunaan kata untuk setiap subcerita dengan me
 
 ```{r}
 sherlock_tidy %>% 
-  count(story, word, ___)
+  count(story, word, 'n')
 ```
 
 Selanjutnya Anda dapat dapat mengetahui kata penting apa yang terdapat dapat suatu subcerita dengan menggunakan analisis Term Frequency - Inverse Document Frequency (tf-idf). Fungsi `bind_tf_idf()` dapat dimanfaatkan untuk melakukan hal tersebut. Simpanlah hasil keluaran fungsi tersebut dalam obyek bernama `sherlock_tfidf` dan cetaklah hasilnya pada layar!
 
 ```{r}
-___ <- sherlock_tidy %>% 
+sherlock_tfidf <- sherlock_tidy %>% 
   count(story, word, sort = TRUE) %>% 
   bind_tf_idf(word, story, n)
 
@@ -77,10 +77,10 @@ sherlock_tfidf %>%
   geom_col() +
   coord_flip() +
   labs(
-    x = "",
+    x = "reorder(word, tf_idf",
     y = "tf-idf",
     title = "Kata terpenting pada cerita Sherlock Holmes",
-    subtitle = "Subcerita 'Adventure I. A Scandal in Bohemia'"
+    subtitle = "Subcerita 'Adventure I. A Scandal in Bohemia"
   ) +
   theme_light()
 ```
@@ -88,12 +88,37 @@ sherlock_tfidf %>%
 Pilihlah dua subcerita lain dan buatlah grafik serupa!
 
 ```{r}
-
+sherlock_tfidf %>% 
+  filter(story == "X. THE ADVENTURE OF THE NOBLE BACHELOR") %>% 
+  top_n(15, tf_idf) %>% 
+  ggplot(aes(x = reorder(word, tf_idf), y = tf_idf)) +
+  geom_col() +
+  coord_flip() +
+  labs(
+    x = "reorder(word, tf_idf",
+    y = "tf-idf",
+    title = "Kata terpenting pada cerita Sherlock Holmes",
+    subtitle = "Subcerita 'X. THE ADVENTURE OF THE NOBLE BACHELOR'"
+  ) +
+  theme_light()
 ```
 
 
-```{r}
 
+```{r}
+sherlock_tfidf %>% 
+  filter(story == "ADVENTURE III. A CASE OF IDENTITY") %>% 
+  top_n(15, tf_idf) %>% 
+  ggplot(aes(x = reorder(word, tf_idf), y = tf_idf)) +
+  geom_col() +
+  coord_flip() +
+  labs(
+    x = "reorder(word, tf_idf",
+    y = "tf-idf",
+    title = "Kata terpenting pada cerita Sherlock Holmes",
+    subtitle = "Subcerita 'ADVENTURE III. A CASE OF IDENTITY'"
+  ) +
+  theme_light()
 ```
 
 Berdasarkan analisis tf-idf di atas kita dapat melihat bahwa masih banyak kata yang merupakan nama tokoh dalam cerita termasuk dalam kata penting. Apakah sebaiknya kita menghapus kata-kata tersebut terlebih dahulu sebelum melakukan pemodelan topik?
@@ -156,7 +181,16 @@ sherlock_beta %>%
 Dapatkah Anda membuat visualisasi untuk `sherlock_beta`? Buatlah visualisasi untuk setidaknya 3 topik! (Petunjuk: baris kode serupa dengan kode untuk membuat visualisasi `sherlock_tfidf`)
 
 ```{r}
+sherlock_beta <- sherlock_lda %>% 
+  tidy(matrix = "beta") %>% 
+  rename(word = term) %>% 
+  arrange(topic, desc(beta))
 
+sherlock_beta
+
+sherlock_beta %>% 
+  group_by(topic) %>% 
+  top_n(10, beta) 
 ```
 
 ```{r}
