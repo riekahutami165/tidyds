@@ -31,16 +31,17 @@ Pada *chunk* pertama ini Anda diminta untuk mengaktifkan paket-paket yang diperl
 Selanjutnya kita akan membuat dua obyek global lain yaitu `option_station` dan `option_parameter`.
 
 ```{r global}
-___
-___
-___
-___
-___
-___
+library(shiny)
+library(here)
+library(vroom)
+library(dplyr)
+library(ggplot2)
+library(plotly)
 
-___ <- vroom(here("data-raw", "___"))
+
+udara_bandung <- vroom(here("data-raw", "udara_bandung.csv"))
 option_station <- unique(udara_bandung[["station"]])
-___ <- colnames(udara_bandung)[-c(1, 2)]
+option_parameter <- colnames(udara_bandung)[-c(1, 2)]
 ```
 
 **`ui`**
@@ -49,7 +50,7 @@ Berikutnya kita akan menuliskan kode antarmuka (*front-end*/*user interface*) pa
 
 ```{r ui}
 ui <- fluidPage(
-  title = "Air Quality | R Academy Telkom University",
+    title = "Air Quality | R Academy Telkom University",
   headerPanel("Air Quality of Kota Bandung"),
   sidebarLayout(
     sidebarPanel(
@@ -58,11 +59,20 @@ ui <- fluidPage(
                   choices = option_station,
                   multiple = TRUE,
                   selected = option_station[[1]]),
-      ___
+      
+      selectInput(inputId = "parameter",
+                  label =  "parameter",
+                  choices = option_parameter,
+                  selected = '3'),
+                  
       textInput(inputId = "parameter_label",
                 label = "Label for parameter",
                 value = ""),
-      ___
+      
+     textInput(inputId = "plot_title",
+                label = "Title of plot",
+                value = "")
+     
     ),
     mainPanel(
       plotlyOutput(outputId = "aq_plot")
@@ -80,20 +90,22 @@ server <- function(input, output, session) {
   aq_plot <- reactive({
     udara_bandung %>%
       filter(station %in% input$station) %>%
-      ggplot(aes_string(x = "day", y = ___, colour = "station")) +
-      geom____ +
+      ggplot(aes_string(x = "day", y = input$parameter_label, colour = "station")) +
+      geom_line() +
       scale_x_date(date_breaks = "2 weeks") +
       labs(
         x = "",
-        y = ifelse(input$parameter_label == "", input$parameter, input$parameter_label),
+        y = ifelse(input$parameter_label == "",
+  input$parameter, input$parameter_label),
         colour = "Station",
-        title = input$___
+        title = input$plot_title
       ) +
       theme_light()
   })
-  
-  output$___ <- renderPlotly({
-    ggplotly(aq_plot())
+
+  output$aq_plot <- renderPlotly({
+    # ggplotly(aq_plot())
+    
   })
 }
 ```
