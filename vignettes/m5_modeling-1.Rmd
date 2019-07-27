@@ -23,15 +23,15 @@ Namun keragaman dan banyaknya jumlah paket tersebut juga menyebabkan adanya hamb
 Oleh karena itu, dalam pelatihan ini kita akan memanfaatkan sebuah "sistem" bernama `tidymodels`. `tidymodels` dirancang untuk mengatasi permasalahan yang disebutkan diatas sehingga pengguna dapat melakukan pembelajaran mesin dengan lebih mudah. Silakan Anda aktifkan paket tersebut terlebih dahulu beserta paket `vroom` dan `here`!
 
 ```{r}
-___
-___
-___
+library(vroom)
+library(here)
 ```
 
 Dalam studi kasus ini kita akan melakukan pemodelan dan prediksi untuk nilai ujian nasional tingkat SMP di Kota Bandung. Imporlah "un_smp.csv" yang berada dalam subdirektori "data-raw" dan simpan sebagai obyek R bernama `un_smp`. Selanjutnya jalankan fungsi `glimpse()` pada `un_smp` untuk mempelajari stryrukturnya! (Catatan: `glimpse()` adalah fungsi dari paket `dplyr` yang serupa dengan fungsi `str()`)
 
 ```{r}
-___ <- vroom(here("data-raw", "___"))
+library(dplyr)
+un_smp <- vroom(here("data-raw", "un_smp.csv"))
 glimpse(un_smp)
 ```
 
@@ -40,12 +40,13 @@ Kita akan mencoba melakukan prediksi nilai ujian mata pelajaran IPA (`ipa`) berd
 ```{r}
 un_smp <- un_smp %>% 
   mutate(tahun = as.character(tahun))
-glimpse(___)
+glimpse(un_smp)
 ```
 
 Mari kita coba membuat perbandingan nilai ujian IPA antara sekolah negeri dan swasta. Perhatikan kode yang disajikan pada *chunk* berikut:
 
 ```{r}
+library(ggplot2)
 un_smp %>% 
   group_by(status) %>% 
   summarise(ipa = mean(ipa)) %>% 
@@ -64,12 +65,25 @@ un_smp %>%
 Grafik di atas menunjukan kemungkinan adanya pengaruh dari status sekolah terhadap nilai ujian IPA. Sekarang buatlah grafik yang serupa untuk mempelajari kemungkinan pengaruh dari tahun ujian! Apa informasi yang dapat Anda ambil?
 
 ```{r}
-___
+un_smp %>% 
+  group_by(status) %>% 
+  summarise(ipa = mean(ipa)) %>% 
+  ggplot(aes(x = status, y = ipa)) +
+  geom_col() + 
+  labs(
+    x = "tahun ujian",
+    y = "Rerata nilai ujian IPA",
+    title = "SMP Negeri vs SMP Swasta",
+    subtitle = "Ujian Nasional SMP di Kota Bandung 2015-2019",
+    caption = "Sumber: Open Data Kota Bandung"
+  ) +
+  theme_light()
 ```
 
 Sekarang kita akan melakukan tahap pertama dari pembelajaran mesin, yaitu membagi data yang kita miliki ke dalam dua kelompok. Kelompok pertama disebut `training` yang akan digunakan untuk membuat pemodelan. Sedangkan kelompok kedua disebut `testing` yang akan digunakan untuk menguji performa model yang kita buat. Fungsi `initial_split()` dari paket `rsample` akan digunakan untuk melakukan hal tersebut. Berapakah komposisi `training` terhadap `testing` bawaan pada fungsi tersebut? (Petunjuk: `?initial_split`)
 
 ```{r}
+library(rsample)
 set.seed(270719)
 un_smp_split <- initial_split(un_smp)
 un_smp_split
@@ -84,7 +98,7 @@ training(un_smp_split)
 
 **data `testing`**
 ```{r}
-___
+testing(un_smp_split) 
 ```
 
 Sebelum membuat pemodelan, tidak jarang perlu dilakukan pra-pengolahan pada data yang kita miliki terlebih dahulu. Mengapa demikian? Hal tersebut penting dilakukan agar data tersebut dapat memenuhi prasyarat sehingga algoritma dari model dapat berjalan dengan baik dengan performa bagus. Contoh: pada metode regresi linear diharapkan tidak terjadi *multicolinearity* antar variabel prediktor; pada beberapa metode klasifikasi diharapkan agar skala yang digunakan adalah sama untuk semua prediktor; dan lain-lain.
@@ -92,6 +106,7 @@ Sebelum membuat pemodelan, tidak jarang perlu dilakukan pra-pengolahan pada data
 Dalam `tidymodels` tahap pra-pengolahan tersebut dianalogikan sebagai "resep" sehingga dapat mudah dipahami. Anda dapat menggunakan fungsi `recipe()`, `update_role()`, dan `step_*()` dari paket `recipes` untuk membuat "resep" tersebut. Perhatikan baris kode berikut untuk membuat "resep" berdasarkan data `training`:
 
 ```{r}
+library(tidymodels)
 un_smp_recipe <- training(un_smp_split) %>% 
   recipe() %>% 
   update_role(ipa, new_role = "outcome") %>% 
@@ -111,12 +126,12 @@ Tahap selanjutnya adalah kita harus menerapkan "resep" yang telah di buat pada d
 un_smp_training <- un_smp_recipe %>% 
   prep() %>% 
   bake(training(un_smp_split))
-___(un_smp_training)
+glimpse(un_smp_training)
 
 un_smp_testing <- un_smp_recipe %>% 
   prep() %>% 
   bake(testing(un_smp_split))
-___(un_smp_testing)
+glimpse(un_smp_testing)
 ```
 
 Setelah Anda membagi data awal menjadi dua `training` dan `testing` serta menerapkan "resep" pra-pengolahan pada keduanya, sekarang saatnya Anda melakukan pemodelan. Dalam studi kasus ini Anda akan menggunakan dua model, yaitu Linear Regression dan Random Forest.
@@ -146,8 +161,8 @@ Kesimpulan apa yang dapat Anda ambil berdasarkan hasil diatas?
 Sekarang buatlah pemodelan dan pengujian performa seperti di atas namun menggunakan Random Forest! (Petunjuk: fungsi `rand_forest()` dan "mesin" adalah "ranger")
 
 ```{r}
-un_smp_rf <- ___(mode = "regression") %>% 
-  set_engine(___) %>% 
+un_smp_rf <- rand_forest(mode = "regression") %>% 
+  set_engine("ranger") %>% 
   fit(ipa ~ . -nama_sekolah, data = un_smp_training)
 
 un_smp_rf
@@ -155,8 +170,8 @@ un_smp_rf
 
 ```{r}
 un_smp_rf %>% 
-  ___ %>% 
-  ___ %>% 
+  predict(un_smp_testing) %>%  
+  bind_cols(un_smp_testing) %>% 
   metrics(truth = ipa, estimate = .pred)
 ```
 
