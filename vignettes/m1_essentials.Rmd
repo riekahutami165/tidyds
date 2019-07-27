@@ -40,6 +40,15 @@ summary(mtcars) # melihat rigkasan statustik dari data data mtcars
 
 Kombinasi "Ctrl + Alt + I" dapat Anda gunakan untuk membuah *chunk* dengan bahasa pemrograman R. Buatlah *chunk* baru berisi kode pemrograman R sebagai berikut!
 
+```{r}
+
+filled.contour(volcano,
+               color.palette = terrain.colors, 
+               plot.title = title("Topografi Gunung Maunga Whau"), 
+               key.title = title("Tinggi\n(meter)"))
+
+```
+
 filled.contour(volcano,
                color.palette = terrain.colors, 
                plot.title = title("Topografi Gunung Maunga Whau"), 
@@ -55,7 +64,7 @@ Kemudian bagaimana cara mengatur dan memproduksi dokumen final tersebut? Caranya
 
 Jalankanlah kode dalam *chunk* berikut:
 ```{r}
-"Halo, nama saya adalah ..." # isi dengan nama Anda
+"Halo, nama saya adalah rieka" # isi dengan nama Anda
 ```
 
 Saat Anda menjalankan *chunk* di atas, R akan mengevaluasi dan melakukan eksekusi pada baris kode yang dituliskan. Dalam contoh di atas, keluaran dari eksekusi baris kode adalah kalimat "Halo, nama saya adalah (nama Anda)" yang tercetak di dokumen R Markdown atau konsol RStudio. Mengapa kalimat "# isi dengan nama Anda" tidak ikut tercetak?
@@ -78,7 +87,7 @@ list(15, "r", "TRUE", 24L)
 Saat Anda mengeksekusi *chunk* di atas, keluaran dari kode yang Anda eksekusi hanya tercetak pada layar. Anda dapat "menyimpan" keluaran dari kode menjadi sebuah obyek R dengan menggunakan tanda `<-` dengan format "nama_obyek <- kode_yang_dieksekusi". Buatlah *vector* berupa huruf-huruf vokal dan simpanlah hasilnya dalam obyek R dengan nama `huruf_vokal`! Isilah "___" dengan jawaban yang sesuai!
 
 ```{r}
-___ <- c("a", ___, "u", ___, "o") # objek data tersimpan dengan nama 'huruf_vokal', namun tidak tercetak pada layar
+"___" <- c("a", ___, "u", ___, "o") # objek data tersimpan dengan nama 'huruf_vokal', namun tidak tercetak pada layar
 huruf_vokal # mencetak objek data dengan nama 'huruf_vokal' pada layar (Anda juga dapat menuliskannya sebagai "print(huruf_vokal)")
 ```
 
